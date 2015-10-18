@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.xavigil.flickrnearby.activity.PhotoPreviewActivity;
 import com.xavigil.flickrnearby.location.LocationManager;
 import com.xavigil.flickrnearby.model.Photo;
 import com.xavigil.flickrnearby.model.PhotosResponse;
@@ -168,9 +169,9 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<PhotosResponse>() {
             @Override
             public void onResponse(Response<PhotosResponse> response, Retrofit retrofit) {
-                Log.d(TAG, "request " + response.raw().request().toString() );
+                Log.d(TAG, "request " + response.raw().request().toString());
                 Log.d(TAG, "received " + response.body().photos.total + " photos");
-                ((GridAdapter)mRecyclerView.getAdapter()).updateItems(response.body().photos.photo);
+                ((GridAdapter) mRecyclerView.getAdapter()).updateItems(response.body().photos.photo);
             }
 
             @Override
@@ -218,7 +219,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, final int position) {
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showPhotoPreview(mItems.get(position));
+                }
+            });
             Picasso.with(mContext)
                     .load(mItems.get(position).url_n)
                     .into(holder.mPhoto);
@@ -227,6 +234,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return mItems.size();
+        }
+
+        private void showPhotoPreview(Photo photo){
+            Intent intent = new Intent(mContext, PhotoPreviewActivity.class);
+            intent.putExtra(PhotoPreviewActivity.EXTRA_PHOTO, photo);
+            mContext.startActivity(intent);
         }
 
     }
