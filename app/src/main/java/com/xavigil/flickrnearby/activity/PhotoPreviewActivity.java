@@ -82,8 +82,8 @@ public class PhotoPreviewActivity extends AppCompatActivity {
 
     private void showPhotoDetails(){
         if(mPhoto == null) return;
-        Intent intent = new Intent(this, PhotoPreviewActivity.class);
-        intent.putExtra(PhotoPreviewActivity.EXTRA_PHOTO, mPhoto);
+        Intent intent = new Intent(this, PhotoDetailsActivity.class);
+        intent.putExtra(PhotoDetailsActivity.EXTRA_PHOTO, mPhoto);
         startActivity(intent);
     }
 }
