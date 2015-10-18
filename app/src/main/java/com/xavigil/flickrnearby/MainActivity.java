@@ -11,13 +11,23 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.xavigil.flickrnearby.location.LocationManager;
+import com.xavigil.flickrnearby.model.Photo;
 import com.xavigil.flickrnearby.model.PhotosResponse;
 import com.xavigil.flickrnearby.server.FlickrAPI;
+
+import java.util.ArrayList;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -37,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Retrofit mRetrofit;
     private int mPageCount = 1;
+
+    private RecyclerView mRecyclerView;
 
     //region Broadcast receivers
 
@@ -75,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        setupRecyclerView();
+
         setupAPI();
         setupIntentFilters();
         LocationManager.get().init(this);
@@ -94,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(mLocationManagerAskPermissionReceiver);
         unregisterReceiver(mLocationChangedReceiver);
         unregisterReceiver(mLocationManagerErrorReceiver);
+    }
+
+    private void setupRecyclerView(){
+        mRecyclerView.setLayoutManager(new GridLayoutManager(mRecyclerView.getContext(), 3));
+        mRecyclerView.setAdapter(new GridAdapter(this));
     }
 
     private void setupAPI(){
@@ -150,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Response<PhotosResponse> response, Retrofit retrofit) {
                 Log.d(TAG, "request " + response.raw().request().toString() );
                 Log.d(TAG, "received " + response.body().photos.total + " photos");
+                ((GridAdapter)mRecyclerView.getAdapter()).updateItems(response.body().photos.photo);
             }
 
             @Override
@@ -158,5 +179,58 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    //region RecyclerViewAdapter
+
+    public static class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder>{
+
+        public static class ViewHolder extends RecyclerView.ViewHolder {
+
+            public final View mView;
+            public final ImageView mPhoto;
+
+            public ViewHolder(View view) {
+                super(view);
+                mView = view;
+                mPhoto = (ImageView) view.findViewById(R.id.photo);
+            }
+
+        }
+
+        private Context mContext;
+        private ArrayList<Photo> mItems;
+
+        public GridAdapter(Context context){
+            mContext = context;
+            mItems = new ArrayList<>();
+        }
+
+        public void updateItems(ArrayList<Photo> photos){
+            mItems = photos;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.gridview_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            Picasso.with(mContext)
+                    .load(mItems.get(position).url_n)
+                    .into(holder.mPhoto);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mItems.size();
+        }
+
+    }
+
+    //endregion
 
 }
