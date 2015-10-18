@@ -16,7 +16,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.xavigil.flickrnearby.location.LocationManager;
-import com.xavigil.flickrnearby.model.Photos;
 import com.xavigil.flickrnearby.model.PhotosResponse;
 import com.xavigil.flickrnearby.server.FlickrAPI;
 
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private IntentFilter mLocationChangedIntentFilter;
     private IntentFilter mLocationErrorIntentFilter;
 
+    private Retrofit mRetrofit;
     private int mPageCount = 1;
 
     //region Broadcast receivers
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setupAPI();
         setupIntentFilters();
         LocationManager.get().init(this);
     }
@@ -93,6 +94,13 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(mLocationManagerAskPermissionReceiver);
         unregisterReceiver(mLocationChangedReceiver);
         unregisterReceiver(mLocationManagerErrorReceiver);
+    }
+
+    private void setupAPI(){
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(BuildConfig.API_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     private void setupIntentFilters(){
@@ -127,16 +135,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestPhotos(Location location, int page){
-        Log.d(TAG, " requesting photos page " + page);
-        String method = "flickr.photos.search";
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BuildConfig.API_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        Call<PhotosResponse> call = retrofit.create(FlickrAPI.class).getPhotos(
-                method, BuildConfig.API_KEY, "json", "1",
-                String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()),
-                "url_n,url_z", String.valueOf(page));
+        Call<PhotosResponse> call = mRetrofit.create(FlickrAPI.class).getPhotos(
+                "flickr.photos.search",
+                BuildConfig.API_KEY,
+                "json",
+                "1",
+                String.valueOf(location.getLatitude()),
+                String.valueOf(location.getLongitude()),
+                "url_n,url_z",
+                String.valueOf(page));
 
         call.enqueue(new Callback<PhotosResponse>() {
             @Override
