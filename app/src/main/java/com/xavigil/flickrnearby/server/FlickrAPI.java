@@ -16,5 +16,6 @@ public interface FlickrAPI {
                                    @Query("lat") String lat,
                                    @Query("lon")String lon,
                                    @Query("extras") String extras,
-                                   @Query("page") String page);
+                                   @Query("page") String page,
+                                   @Query("per_page") String perpage);
 }
