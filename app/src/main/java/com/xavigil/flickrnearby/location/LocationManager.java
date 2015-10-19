@@ -94,8 +94,15 @@ public class LocationManager implements GoogleApiClient.ConnectionCallbacks,
     }
 
     public void updateLocation(){
-        LocationServices.FusedLocationApi
+        int locationPermission = ContextCompat.checkSelfPermission(mContext,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        if(locationPermission == PackageManager.PERMISSION_GRANTED){
+            LocationServices.FusedLocationApi
                 .requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+        else{
+            sendAskPermissionBroadcast();
+        }
     }
 
     @Override

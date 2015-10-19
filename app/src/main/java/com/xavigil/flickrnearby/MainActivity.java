@@ -186,6 +186,7 @@ public class MainActivity extends AppCompatActivity{
                     Toast.makeText(MainActivity.this,
                             "Location denied",
                             Toast.LENGTH_SHORT).show();
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
                 break;
             default:
