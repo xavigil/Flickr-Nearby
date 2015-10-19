@@ -72,7 +72,9 @@ public class LocationManager implements GoogleApiClient.ConnectionCallbacks,
 
     protected synchronized void buildLocationRequest(){
         mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1000*5)
+                .setNumUpdates(1);
     }
 
     private void setLastLocation(Location location){
