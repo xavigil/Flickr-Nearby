@@ -1,7 +1,6 @@
 package com.xavigil.flickrnearby.activity;
 
 import android.animation.LayoutTransition;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -24,18 +23,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.xavigil.flickrnearby.R;
 import com.xavigil.flickrnearby.location.LocationManager;
 import com.xavigil.flickrnearby.model.Photo;
 
-import java.util.ArrayList;
-
 public class PhotoDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final String EXTRA_PHOTO = "photo";
+    public static final String EXTRA_COLOR_BG = "colorBg";
+    public static final String EXTRA_COLOR_TXT = "colorTxt";
 
     private RelativeLayout mRootLayout;
     private FrameLayout mMapContainer;
@@ -101,13 +99,13 @@ public class PhotoDetailsActivity extends AppCompatActivity implements OnMapRead
     private void setupLayoutColors(ActionBar ab){
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
-            int colorBg = extras.getInt("colorBg");
+            int colorBg = extras.getInt(EXTRA_COLOR_BG);
             if(colorBg!=0) {
                 if(ab!=null)
                     ab.setBackgroundDrawable(new ColorDrawable(colorBg));
                 mRootLayout.setBackgroundColor(colorBg);
             }
-            int colorText = extras.getInt("colorTxt");
+            int colorText = extras.getInt(EXTRA_COLOR_TXT);
             if(colorText!=0) {
                 TextView txt = (TextView) findViewById(R.id.txtMap);
                 txt.setTextColor(colorText);

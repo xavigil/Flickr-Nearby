@@ -27,7 +27,6 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.xavigil.flickrnearby.activity.PhotoDetailsActivity;
-import com.xavigil.flickrnearby.activity.PhotoPreviewActivity;
 import com.xavigil.flickrnearby.location.LocationManager;
 import com.xavigil.flickrnearby.model.Photo;
 import com.xavigil.flickrnearby.model.PhotosResponse;
@@ -325,11 +324,11 @@ public class MainActivity extends AppCompatActivity{
 
         private void showPhotoPreview(Photo photo, Palette.Swatch colorBg, Palette.Swatch colorText){
             Intent intent = new Intent(mContext, PhotoDetailsActivity.class);
-            intent.putExtra(PhotoPreviewActivity.EXTRA_PHOTO, photo);
+            intent.putExtra(PhotoDetailsActivity.EXTRA_PHOTO, photo);
             if(colorBg!=null)
-                intent.putExtra("colorBg", colorBg.getRgb());
+                intent.putExtra(PhotoDetailsActivity.EXTRA_COLOR_BG, colorBg.getRgb());
             if(colorText!=null)
-                intent.putExtra("colorTxt", colorText.getRgb());
+                intent.putExtra(PhotoDetailsActivity.EXTRA_COLOR_TXT, colorText.getRgb());
             mContext.startActivity(intent);
         }
 
