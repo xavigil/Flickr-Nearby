@@ -27,8 +27,6 @@ public class PhotoPreviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_preview);
 
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
-
         ActionBar ab = getSupportActionBar();
         setupActionBar(ab);
 

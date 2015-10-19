@@ -1,8 +1,150 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          xmlns:map="http://schemas.android.com/apk/res-auto"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:id="@+id/map"
-          tools:context="com.xavigil.flickrnearby.activity.PhotoDetailsActivity"
-          android:name="com.google.android.gms.maps.SupportMapFragment"/>
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/rootContainer"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context="com.xavigil.flickrnearby.activity.PhotoPreviewActivity"
+android:animateLayoutChanges="true"
+    >
+
+    <ImageView
+        android:id="@+id/photo"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:scaleType="centerCrop"
+        android:onClick="onPhotoClick"
+        />
+
+    <LinearLayout
+        android:id="@+id/mapTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/photo"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        >
+        <ImageView
+            android:id="@+id/imgMap"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_place_white"
+            />
+        <TextView
+            android:id="@+id/txtMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/map"
+            android:textSize="@dimen/big_font"
+            android:layout_marginLeft="@dimen/grid_margins"
+            />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/mapContainer"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@null"
+        android:layout_below="@id/mapTitle"
+        android:layout_marginTop="@dimen/info_separation"
+        >
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            />
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/mapClickListener"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBaseline="@id/mapContainer"
+        android:layout_alignTop="@id/mapContainer"
+        android:background="@null"
+        android:onClick="onMapClick"
+        />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:layout_below="@id/mapContainer"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/activity_vertical_margin"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:id="@+id/imgInfo"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_info_white"
+                    />
+                <TextView
+                    android:id="@+id/txtInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/photo_detail"
+                    android:textSize="@dimen/big_font"
+                    android:layout_marginLeft="@dimen/grid_margins"
+                    />
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/info_separation"
+                android:text="@string/title"
+                android:textSize="@dimen/small_font"
+                />
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/big_font"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/info_separation"
+                android:text="@string/owner"
+                android:textSize="@dimen/small_font"
+                />
+            <TextView
+                android:id="@+id/txtOwner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/big_font"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/info_separation"
+                android:text="@string/distance"
+                android:textSize="@dimen/small_font"
+                />
+            <TextView
+                android:id="@+id/txtDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

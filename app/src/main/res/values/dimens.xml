@@ -4,4 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="grid_margins">3dp</dimen>
     <dimen name="inverse_grid_margins">-4dp</dimen>
+    <dimen name="info_separation">10dp</dimen>
+    <dimen name="big_font">16sp</dimen>
+    <dimen name="small_font">12sp</dimen>
 </resources>

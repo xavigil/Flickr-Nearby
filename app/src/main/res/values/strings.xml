@@ -3,4 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="action_info">Info</string>
     <string name="title_activity_photo_details">Details</string>
+    <string name="map">MAP</string>
+    <string name="photo_detail">INFO</string>
+    <string name="title">TITLE</string>
+    <string name="owner">OWNER</string>
+    <string name="distance">DISTANCE</string>
+
 </resources>

@@ -6,11 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.xavigil.flickrnearby.activity.PhotoDetailsActivity;
 import com.xavigil.flickrnearby.activity.PhotoPreviewActivity;
 import com.xavigil.flickrnearby.location.LocationManager;
 import com.xavigil.flickrnearby.model.Photo;
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 "1",
                 String.valueOf(location.getLatitude()),
                 String.valueOf(location.getLongitude()),
-                "url_n,url_z",
+                "url_n,url_z,owner_name,geo",
                 String.valueOf(page));
 
         call.enqueue(new Callback<PhotosResponse>() {
@@ -219,16 +224,41 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showPhotoPreview(mItems.get(position));
-                }
-            });
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             Picasso.with(mContext)
                     .load(mItems.get(position).url_n)
                     .into(holder.mPhoto);
+
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bitmap bitmap = ((BitmapDrawable) holder.mPhoto.getDrawable()).getBitmap();
+                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            if (palette != null) {
+
+                                Palette.Swatch darkVibrantSwatch = palette.getDarkVibrantSwatch();
+                                Palette.Swatch darkMutedSwatch = palette.getDarkMutedSwatch();
+                                Palette.Swatch lightVibrantSwatch = palette.getLightVibrantSwatch();
+                                Palette.Swatch lightMutedSwatch = palette.getLightMutedSwatch();
+                                Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
+
+                                Palette.Swatch background = (darkVibrantSwatch != null)
+                                        ? darkVibrantSwatch : darkMutedSwatch;
+
+                                Palette.Swatch text = (darkVibrantSwatch != null)
+                                        ? lightVibrantSwatch : lightMutedSwatch;
+
+                                showPhotoPreview(mItems.get(position), background, text);
+                            }
+
+
+                        }
+                    });
+                }
+            });
         }
 
         @Override
@@ -236,9 +266,13 @@ public class MainActivity extends AppCompatActivity {
             return mItems.size();
         }
 
-        private void showPhotoPreview(Photo photo){
-            Intent intent = new Intent(mContext, PhotoPreviewActivity.class);
+        private void showPhotoPreview(Photo photo, Palette.Swatch colorBg, Palette.Swatch colorText){
+            Intent intent = new Intent(mContext, PhotoDetailsActivity.class);
             intent.putExtra(PhotoPreviewActivity.EXTRA_PHOTO, photo);
+            if(colorBg!=null)
+                intent.putExtra("colorBg", colorBg.getRgb());
+            if(colorText!=null)
+                intent.putExtra("colorTxt", colorText.getRgb());
             mContext.startActivity(intent);
         }
 

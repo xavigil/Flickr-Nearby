@@ -41,7 +41,9 @@
 
         <activity
             android:name=".activity.PhotoDetailsActivity"
-            android:label="@string/title_activity_photo_details" >
+            android:label="@string/title_activity_photo_details"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
         </activity>
     </application>
 

@@ -7,10 +7,13 @@ import android.os.Parcelable;
 public class Photo implements Parcelable {
     public String id;
     public String owner;
+    public String ownername;
     public String secret;
     public String server;
     public String farm;
     public String title;
+    public float latitude;
+    public float longitude;
     public int ispublic;
     public int isfriend;
     public int isfamily;
@@ -24,10 +27,13 @@ public class Photo implements Parcelable {
     public Photo(Parcel in){
         id=in.readString();
         owner=in.readString();
+        ownername=in.readString();
         secret=in.readString();
         server=in.readString();
         farm=in.readString();
         title=in.readString();
+        latitude=in.readFloat();
+        longitude=in.readFloat();
         ispublic=in.readInt();
         isfriend=in.readInt();
         isfamily=in.readInt();
@@ -48,10 +54,13 @@ public class Photo implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(id);
         parcel.writeString(owner);
+        parcel.writeString(ownername);
         parcel.writeString(secret);
         parcel.writeString(server);
         parcel.writeString(farm);
         parcel.writeString(title);
+        parcel.writeFloat(latitude);
+        parcel.writeFloat(longitude);
         parcel.writeInt(ispublic);
         parcel.writeInt(isfriend);
         parcel.writeInt(isfamily);
