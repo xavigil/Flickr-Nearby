@@ -8,17 +8,20 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Retrofit mRetrofit;
     private int mPageCount = 1;
+    private ArrayList<Photo> mPhotos;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
     //region Broadcast receivers
@@ -71,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             Location location = (Location)intent.getExtras().get(LocationManager.EXTRA_LOCATION);
             if(location != null) {
-                Toast.makeText(MainActivity.this, "" + location.toString(), Toast.LENGTH_SHORT).show();
-                MainActivity.this.requestPhotos(location, mPageCount++);
+                MainActivity.this.requestPhotos(location, mPageCount);
             }
         }
     };
@@ -93,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        setupSwipeRefreshLayout();
         setupRecyclerView();
 
         setupAPI();
@@ -117,7 +121,26 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(mLocationManagerErrorReceiver);
     }
 
+    private void setupSwipeRefreshLayout(){
+        mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPageCount = 1;
+                LocationManager.get().updateLocation();
+            }
+        });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
+    }
+
     private void setupRecyclerView(){
+        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new GridLayoutManager(mRecyclerView.getContext(), 3));
         mRecyclerView.setAdapter(new GridAdapter(this));
     }
@@ -160,7 +183,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void requestPhotos(Location location, int page){
+    private void requestPhotos(Location location, int page) {
+        Log.d(TAG, "requesting page " + page);
         Call<PhotosResponse> call = mRetrofit.create(FlickrAPI.class).getPhotos(
                 "flickr.photos.search",
                 BuildConfig.API_KEY,
@@ -175,8 +199,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Response<PhotosResponse> response, Retrofit retrofit) {
                 Log.d(TAG, "request " + response.raw().request().toString());
-                Log.d(TAG, "received " + response.body().photos.total + " photos");
-                ((GridAdapter) mRecyclerView.getAdapter()).updateItems(response.body().photos.photo);
+//                Log.d(TAG, "received " + response.body().photos.total + " photos");
+                mSwipeRefreshLayout.setRefreshing(false);
+                if(mPageCount == 1){
+                    mPhotos = response.body().photos.photo;
+                }
+                else{
+                    mPhotos.addAll(response.body().photos.photo);
+                }
+                ((GridAdapter) mRecyclerView.getAdapter()).updateItems(mPhotos);
+                mPageCount++;
             }
 
             @Override
